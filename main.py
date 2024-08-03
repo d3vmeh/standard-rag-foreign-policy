@@ -1,6 +1,5 @@
 from langchain_openai import OpenAIEmbeddings
 
-from langchain_community.llms import Ollama
 from langchain_openai.llms import OpenAI
 
 from langchain.chains import ConversationChain
@@ -10,15 +9,13 @@ import os
 from create_database import *
 
 
-chunks = create_chunks("ollama-in-context-learning/PDFs/",replace_newlines=True)
+chunks = create_chunks(replace_newlines=True)
 
 print(len(chunks))
 
 embeddings = OpenAIEmbeddings()
 
-#save_database(embeddings,chunks,path="ollama-in-context-learning/Chroma")
-
-db = load_database(embeddings,path="ollama-in-context-learning/Chroma")
+db = load_database(embeddings,path="standard-rag-foreign-policy/Chroma")
 
 model = OpenAI(
     model = "gpt-4o-mini"
