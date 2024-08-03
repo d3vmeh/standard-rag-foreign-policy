@@ -34,8 +34,8 @@ def split_docs(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size = 1000, chunk_overlap = 60, length_function = len, is_separator_regex  = False)
     return text_splitter.split_documents(documents)
 
-def create_chunks(path, replace_newlines=False):
-    document = load_documents(path)
+def create_chunks(replace_newlines=False):
+    document = load_documents()
     chunks = split_docs(document)
     if replace_newlines == True:
         for i in range(len(chunks)):
@@ -62,11 +62,11 @@ def query_database(query, database, num_responses = 3, similarity_threshold = 0.
         print("Could not find results")
     return results
 
-def get_response(query,context,prompt,model,conversations=""):
+def get_response(query,context,prompt,model):
 
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in context])
     prompt_template = ChatPromptTemplate.from_template(prompt)
-    prompt = prompt_template.format(conversations = conversations, context=context_text, question=query)
+    prompt = prompt_template.format(context=context_text, question=query)
 
     response_text = model.invoke(prompt)
 
