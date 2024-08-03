@@ -44,35 +44,24 @@ def create_chunks(replace_newlines=False):
     
     return chunks
     
-def save_database(embeddings, chunks, path="Chroma"):
-    #embeddings = OllamaEmbeddings(model="llama3")
-    
+def save_database(embeddings, chunks, path="standard-rag-foreign-policy/Chroma"):    
     database = Chroma.from_documents(chunks,embeddings,persist_directory=path)
     database.persist()
     print(f"Saved {len(chunks)} chunks to Chroma")
 
 
-def load_database(embeddings, path="Chroma"):
+def load_database(embeddings, path="standard-rag-foreign-policy/Chroma"):
     database = Chroma(persist_directory=path,embedding_function=embeddings)
     return database
 
 def query_database(query, database, num_responses = 3, similarity_threshold = 0.5):
     results = database.similarity_search_with_relevance_scores(query,k=num_responses)
-    if results[0][1] < similarity_threshold:
-        print("Could not find results")
+    try:
+        if results[0][1] < similarity_threshold:
+            print("Could not find results")
+    except:
+        print("Error")
     return results
 
-def get_response(query,context,prompt,model):
 
-    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in context])
-    prompt_template = ChatPromptTemplate.from_template(prompt)
-    prompt = prompt_template.format(context=context_text, question=query)
 
-    response_text = model.invoke(prompt)
-
-    sources = [doc.metadata.get("source", None) for doc, _score in context]
-    formatted_response = f"Response: {response_text}\n"#Sources: {sources}"
-    return formatted_response, response_text
-
-d = load_documents()
-print(len(d))
