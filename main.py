@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage
 import shelve
-
+from wordcloud import WordCloud
+from PIL import Image
 
 def get_response(query,context,llm):
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in context])
@@ -40,9 +41,14 @@ def get_response(query,context,llm):
     response_text = chain.invoke(query)
     #sources = [doc.metadata.get("source", None) for doc, _score in context]
     formatted_response = f"Response: {response_text}\n"#Sources: {sources}"
+    wordcloud = create_wordcloud(context_text)
+
     return formatted_response, response_text
 
-
+def create_wordcloud(text):
+    word_cloud = WordCloud(collocations = False, background_color = 'white').generate(text)
+    word_cloud.to_file('wordcloud.png')
+    return word_cloud
 
 def load_chat_history():
     with shelve.open("conversation_history") as db:
@@ -96,6 +102,12 @@ if prompt := st.chat_input("How can I help?"):
         #print(context)
         formatted_response, full_response = get_response(prompt,context,llm)
         message_placeholder.markdown(full_response)   
+        try:
+            img = Image.open('wordcloud.png')
+            st.image(img, caption='Wordcloud of the response', use_column_width=True)
+        except:
+            pass
+        
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 save_chat_history(st.session_state.messages)
