@@ -5,6 +5,7 @@ from create_database import *
 import matplotlib.pyplot as plt
 import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage
+import shelve
 
 
 def get_response(query,context,llm):
@@ -42,6 +43,16 @@ def get_response(query,context,llm):
     return formatted_response, response_text
 
 
+
+def load_chat_history():
+    with shelve.open("conversation_history") as db:
+        return db.get("messages",[])
+    
+def save_chat_history(messages):
+    with shelve.open("conversation_history") as db:
+        db["messages"] = messages
+
+
 embeddings = OpenAIEmbeddings()
 
 
@@ -53,7 +64,7 @@ Run to Create/Update Chrome DB
 #save_database(embeddings,chunks,path="standard-rag-foreign-policy/Chroma")
 
 db = load_database(embeddings,path="standard-rag-foreign-policy/Chroma")
-llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.7)
+llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.6)
 
 
 
@@ -62,30 +73,66 @@ print("Ready to answer questions")
 
 st.title("Standard RAG AI Foreign Policy Assistant")
 
+if "messages" not in st.session_state:
+    st.session_state.messages = load_chat_history()
 
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+with st.sidebar:
+    if st.button("Clear Chat History"):
+        st.session_state.messages = []
+        save_chat_history([])
 
-chat_placeholder = st.container()
-prompt_placeholder = st.form("chat-form")
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-user_query = st.chat_input("Enter a question")
+if prompt := st.chat_input("How can I help?"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        context = query_database(prompt,db)
+        #print(context)
+        formatted_response, full_response = get_response(prompt,context,llm)
+        message_placeholder.markdown(full_response)   
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-if user_query != None and user_query != "":
+save_chat_history(st.session_state.messages)
 
-    st.session_state.chat_history.append(HumanMessage(user_query))
 
-    with st.chat_message("Human"):
-        st.markdown(user_query)
 
-    with st.chat_message("AI"):
-        context = query_database(user_query, db)
-        print(context)
-        response = get_response(user_query, context, llm)
-        st.markdown(response)
 
-    st.session_state.chat_history.append(AIMessage(response))
+
+
+
+
+# st.title("Standard RAG AI Foreign Policy Assistant")
+
+
+
+# if "chat_history" not in st.session_state:
+#     st.session_state.chat_history = []
+
+# chat_placeholder = st.container()
+# prompt_placeholder = st.form("chat-form")
+
+# user_query = st.chat_input("Enter a question")
+
+# if user_query != None and user_query != "":
+
+#     st.session_state.chat_history.append(HumanMessage(user_query))
+
+#     with st.chat_message("Human"):
+#         st.markdown(user_query)
+
+#     with st.chat_message("AI"):
+#         context = query_database(user_query, db)
+#         print(context)
+#         response = get_response(user_query, context, llm)
+#         st.markdown(response)
+
+#     st.session_state.chat_history.append(AIMessage(response))
 # while True:
 #     query = input("Enter a question: ")
 #     results = query_database(query, db, num_responses = 100)
