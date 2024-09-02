@@ -2,6 +2,9 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from create_database import *
+import matplotlib.pyplot as plt
+import streamlit as st
+from langchain_core.messages import HumanMessage, AIMessage
 
 
 def get_response(query,context,llm):
@@ -52,8 +55,40 @@ Run to Create/Update Chrome DB
 db = load_database(embeddings,path="standard-rag-foreign-policy/Chroma")
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.7)
 
-while True:
-    query = input("Enter a question: ")
-    results = query_database(query, db, num_responses = 100)
-    response, response_text = get_response(query, results, llm)
-    print(f"\n{response}\n\n\n-----------------------------------------------------------------")
+
+
+
+print("Ready to answer questions")
+
+st.title("Standard RAG AI Foreign Policy Assistant")
+
+
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+chat_placeholder = st.container()
+prompt_placeholder = st.form("chat-form")
+
+user_query = st.chat_input("Enter a question")
+
+if user_query != None and user_query != "":
+
+    st.session_state.chat_history.append(HumanMessage(user_query))
+
+    with st.chat_message("Human"):
+        st.markdown(user_query)
+
+    with st.chat_message("AI"):
+        context = query_database(user_query, db)
+        print(context)
+        response = get_response(user_query, context, llm)
+        st.markdown(response)
+
+    st.session_state.chat_history.append(AIMessage(response))
+# while True:
+#     query = input("Enter a question: ")
+#     results = query_database(query, db, num_responses = 100)
+#     response, response_text = get_response(query, results, llm)
+#     print(f"\n{response}\n\n\n-----------------------------------------------------------------")
+    

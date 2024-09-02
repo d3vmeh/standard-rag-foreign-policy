@@ -55,7 +55,7 @@ def load_database(embeddings, path="standard-rag-foreign-policy/Chroma"):
     return database
 
 def query_database(query, database, num_responses = 3, similarity_threshold = 0.5):
-    results = database.similarity_search_with_relevance_scores(query,k=num_responses)
+    results = database.similarity_search_with_relevance_scores(query, k=num_responses)
     try:
         if results[0][1] < similarity_threshold:
             print("Could not find results")
