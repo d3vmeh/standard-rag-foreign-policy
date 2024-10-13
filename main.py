@@ -76,7 +76,7 @@ Run to Create/Update Chrome DB
 
 db = load_database(embeddings,path="standard-rag-foreign-policy/Chroma")
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.6)
-llm = ChatAnthropic(model_name="claude-3-5-sonnet",temperature=0.6)
+llm = ChatAnthropic(model_name="claude-3-5-sonnet-20240620",temperature=0.6)
 
 
 
