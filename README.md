@@ -11,8 +11,6 @@ Foreign policy requires thorough analysis of diverse sources, a process that typ
 - **Contextual Summaries**: The retrieved information is summarized and presented to the LLM for enhanced comprehension and more insightful foreign policy recommendations.
 - **Foreign Policy Insights**: The assistant is capable of responding to hypothetical foreign policy scenarios, covering perspectives on military, diplomatic, and economic issues, as well as evaluating global implications.
 
-### Benefits of RAG:
-The standard RAG approach allows for efficient retrieval of relevant information from large volumes of text without the need for a structured knowledge graph. This method offers flexibility in data retrieval while still grounding the LLM's responses in solid evidence from the retrieved documents.
 
 ### Use Cases:
 - Assisting foreign policy researchers by quickly retrieving and analyzing relevant data for decision-making.
