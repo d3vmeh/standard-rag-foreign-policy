@@ -1,6 +1,6 @@
 # AI Foreign Policy Assistant with Retrieval-Augmented Generation (RAG)
 
-This project is an AI-powered assistant designed to augment foreign policy decision-making through the use of **Retrieval-Augmented Generation (RAG)**. The AI assistant helps accelerate research and analysis, particularly focusing on US foreign policy. Unlike other systems, this project uses a standard RAG approach without a knowledge graph, relying on text-based data retrieval to provide relevant context for decision-making.
+This project is an AI-powered assistant designed to augment foreign policy decision-making through the use of **Retrieval-Augmented Generation (RAG)**. The AI assistant helps accelerate research and analysis, particularly focusing on US foreign policy. 
 
 ### Project Overview:
 Foreign policy requires thorough analysis of diverse sources, a process that typically takes significant time and effort. This AI Foreign Policy Assistant leverages Large Language Models (LLMs) to process and analyze large volumes of data faster and more efficiently than traditional human research teams, offering a quicker path to informed decision-making.
