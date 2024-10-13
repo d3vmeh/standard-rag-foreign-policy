@@ -1,4 +1,5 @@
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from create_database import *
@@ -75,6 +76,7 @@ Run to Create/Update Chrome DB
 
 db = load_database(embeddings,path="standard-rag-foreign-policy/Chroma")
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.6)
+llm = ChatAnthropic(model_name="claude-3-5-sonnet",temperature=0.6)
 
 
 
